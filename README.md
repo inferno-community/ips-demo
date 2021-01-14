@@ -1,4 +1,4 @@
-# IPS Services Runer Demo
+# IPS Services Runner Demo
 
 **NOTE: This is a demonstration of a prototype.  Bugs and issues are expected and the API _will_ change**
 
