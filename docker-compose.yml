@@ -1,0 +1,41 @@
+version: "3"
+
+services:
+  dfs:
+    build:
+      context: ./dynamic-fhir-servers
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    depends_on:
+      - db
+      - validator_service
+    environment:
+      - RAILS_LOG_TO_STDOUT=true
+    volumes:
+      - ./dynamic-fhir-servers/db/seeds:/home/app/dfs/db/seeds:ro
+  db:
+    image: postgres:12-alpine
+    volumes:
+      - dfs-pgdata:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_HOST_AUTH_METHOD=trust
+      - PGPASSWORD=dfspass1
+    restart: unless-stopped
+  validator_service:
+    image: infernocommunity/fhir-validator-service:latest
+    restart: unless-stopped
+  cft:
+    build:
+      context: ./client-fhir-testing
+    restart: unless-stopped
+    ports:
+      - "9292:9292"
+  inferno:
+    image: onchealthit/inferno:ips-0.2
+    restart: unless-stopped
+    ports:
+      - "4000:4000"
+
+volumes:
+  dfs-pgdata:
